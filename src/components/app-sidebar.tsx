@@ -1,8 +1,15 @@
-import { ChevronsUpDown, LogOut } from "lucide-react";
-import Form from "next/form";
+"use client";
 
-import { auth, signIn, signOut } from "@/auth";
+import { Chat } from "@prisma/client";
+import { ChevronsUpDown, LogOut, Plus } from "lucide-react";
+import { redirect } from "next/navigation";
+import { User } from "next-auth";
+import { signIn, signOut } from "next-auth/react";
+import useSWR from "swr";
 
+import { fetcher } from "@/lib/utils";
+
+import { ChatList } from "./chat-list";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -21,19 +28,54 @@ import {
   SidebarMenuItem,
 } from "./ui/sidebar";
 
-export const AppSidebar = async () => {
-  const session = await auth();
+export const AppSidebar = ({ user }: { user: User | null }) => {
+  const {
+    data: history,
+    isLoading,
+    mutate,
+  } = useSWR<Array<Chat>>(user ? "/api/history" : null, fetcher, {
+    fallbackData: [],
+  });
+
+  const handleCreateChat = async () => {
+    const createResponse = await fetch("/api/history", {
+      method: "POST",
+    });
+
+    const chat = await createResponse.json();
+
+    mutate();
+
+    redirect(`/chat/${chat.id}`);
+  };
 
   return (
     <Sidebar>
-      <SidebarHeader></SidebarHeader>
+      <SidebarHeader>
+        {user?.id ? (
+          <SidebarMenu className="w-full px-2">
+            <SidebarMenuItem>
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={handleCreateChat}
+              >
+                <Plus /> New Chat
+              </Button>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        ) : null}
+      </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          <SidebarMenuItem>{session?.user ? "Home" : "Login"}</SidebarMenuItem>
-        </SidebarMenu>
+        <ChatList
+          user={user}
+          history={history ?? []}
+          isLoading={isLoading}
+          mutate={mutate}
+        />
       </SidebarContent>
       <SidebarFooter>
-        {session?.user ? (
+        {user ? (
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
@@ -44,17 +86,17 @@ export const AppSidebar = async () => {
                   >
                     <Avatar className="size-8 rounded-lg">
                       <AvatarImage
-                        src={session?.user?.image || undefined}
-                        alt={session?.user?.name || "Guest"}
+                        src={user?.image || undefined}
+                        alt={user?.name || "Guest"}
                       />
                       <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {session?.user?.name || "Guest"}
+                        {user?.name || "Guest"}
                       </span>
                       <span className="truncate text-xs">
-                        {session?.user?.email || "Guest"}
+                        {user?.email || "Guest"}
                       </span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
@@ -67,33 +109,32 @@ export const AppSidebar = async () => {
                   sideOffset={4}
                 >
                   <DropdownMenuItem>
-                    <Form
-                      action={async () => {
-                        "use server";
-                        await signOut({ redirectTo: "/" });
+                    <Button
+                      type="submit"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        signOut({ redirectTo: "/" });
                       }}
                     >
-                      <Button type="submit" variant="ghost" size="sm">
-                        <LogOut />
-                        Log out
-                      </Button>
-                    </Form>
+                      <LogOut />
+                      Log out
+                    </Button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </SidebarMenuItem>
           </SidebarMenu>
         ) : (
-          <Form
-            action={async () => {
-              "use server";
-              await signIn();
+          <Button
+            type="submit"
+            className="w-full"
+            onClick={() => {
+              signIn();
             }}
           >
-            <Button type="submit" className="w-full">
-              Log in
-            </Button>
-          </Form>
+            Log in
+          </Button>
         )}
       </SidebarFooter>
     </Sidebar>
