@@ -2,14 +2,15 @@
 
 import { toast } from "sonner";
 
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
   handleSubmit: () => void;
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   input: string;
   isLoading: boolean;
+  setInput: (input: string) => void;
 };
 
 export const ChatForm = ({
@@ -17,6 +18,7 @@ export const ChatForm = ({
   handleInputChange,
   input,
   isLoading,
+  setInput,
 }: Props) => {
   return (
     <form
@@ -35,6 +37,7 @@ export const ChatForm = ({
               toast.error("Please wait for the model to finish its response!");
             } else {
               handleSubmit();
+              setInput("");
             }
           }
         }}

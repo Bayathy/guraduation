@@ -1,9 +1,11 @@
+
 import { prisma } from "@/prisma";
 
-export const createChat = async (userId: string) => {
+export const createChat = async (id: string, userId: string, name: string) => {
   const chat = await prisma.chat.create({
     data: {
-      name: "New Chat",
+      id,
+      name,
       userId,
     },
   });

@@ -9,7 +9,7 @@ import useSWR from "swr";
 
 import { fetcher } from "@/lib/utils";
 
-import { ChatList } from "./chat-list";
+import { ChatList } from "./Chat/chat-list";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -37,28 +37,17 @@ export const AppSidebar = ({ user }: { user: User | null }) => {
     fallbackData: [],
   });
 
-  const handleCreateChat = async () => {
-    const createResponse = await fetch("/api/history", {
-      method: "POST",
-    });
-
-    const chat = await createResponse.json();
-
-    mutate();
-
-    redirect(`/chat/${chat.id}`);
-  };
-
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="mt-2 w-full ">
         {user?.id ? (
-          <SidebarMenu className="w-full px-2">
-            <SidebarMenuItem>
+          <SidebarMenu>
+            <SidebarMenuItem className="flex justify-end">
               <Button
-                className="w-full"
                 variant="outline"
-                onClick={handleCreateChat}
+                onClick={() => {
+                  redirect(`/`);
+                }}
               >
                 <Plus /> New Chat
               </Button>

@@ -1,6 +1,10 @@
 import { prisma } from "@/prisma";
 
-export const createMessage = async (chatId: string, role: string, content: string) => {
+export const createMessage = async (
+  chatId: string,
+  role: string,
+  content: string
+) => {
   const message = await prisma.message.create({
     data: {
       chatId,
@@ -14,6 +18,7 @@ export const createMessage = async (chatId: string, role: string, content: strin
 export const getMessages = async (chatId: string) => {
   const messages = await prisma.message.findMany({
     where: { chatId },
+    orderBy: { createdAt: "asc" },
   });
   return messages;
 };

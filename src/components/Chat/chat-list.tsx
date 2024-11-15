@@ -13,14 +13,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "./ui/sidebar";
+} from "../ui/sidebar";
 
 export const ChatList = ({
   user,
@@ -56,6 +57,9 @@ export const ChatList = ({
   if (!user)
     return (
       <SidebarGroup>
+        <SidebarGroupLabel>
+          <h2 className="text-sm font-semibold">Chats</h2>
+        </SidebarGroupLabel>
         <SidebarGroupContent>
           <div className="flex w-full flex-row items-center justify-center gap-2 text-sm text-zinc-500">
             <div>Login to save and revisit previous chats!</div>
@@ -68,6 +72,9 @@ export const ChatList = ({
     return (
       <SidebarGroup>
         <SidebarGroupContent>
+          <SidebarGroupLabel>
+            <h2 className="text-sm font-semibold">Chats</h2>
+          </SidebarGroupLabel>
           <div className="flex flex-col">
             {[44, 32, 28, 64, 52].map((item) => (
               <div
@@ -93,6 +100,9 @@ export const ChatList = ({
   return (
     <SidebarGroup>
       <SidebarGroupContent>
+        <SidebarGroupLabel>
+          <h2 className="text-sm font-semibold">Chats</h2>
+        </SidebarGroupLabel>
         {history?.length === 0 ? (
           <div className="flex w-full flex-row items-center justify-center gap-2 text-sm text-zinc-500">
             <div>
