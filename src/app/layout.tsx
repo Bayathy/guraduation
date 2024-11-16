@@ -28,7 +28,7 @@ export default async function RootLayout({
 						{children}
 					</SidebarInset>
 				</SidebarProvider>
-				<Toaster />
+				<Toaster position="top-right" />
 			</body>
 		</html>
 	);

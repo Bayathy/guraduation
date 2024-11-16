@@ -12,6 +12,7 @@ export const createMessage = async (
 			content,
 		},
 	});
+
 	return message;
 };
 

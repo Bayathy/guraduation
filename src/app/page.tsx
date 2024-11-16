@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { Chat } from "@/components/chat";
+import { Chat } from "@/components/Chat";
 import { generateUUID } from "@/lib/utils";
 
 export default async function Home() {

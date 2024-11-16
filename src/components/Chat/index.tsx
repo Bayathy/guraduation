@@ -4,6 +4,7 @@ import { Message, useChat } from "ai/react";
 import { ChartNoAxesColumn } from "lucide-react";
 import Link from "next/link";
 import { User } from "next-auth";
+import { useCallback } from "react";
 import Markdown from "react-markdown";
 import { useSWRConfig } from "swr";
 
@@ -52,6 +53,12 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
 		},
 	});
 
+	const onSubmit = useCallback(() => {
+		window.history.replaceState({}, "", `/chat/${chatId}`);
+		handleSubmit();
+		setInput("");
+	}, [chatId, handleSubmit, setInput]);
+
 	return (
 		<div className="flex h-dvh flex-col bg-background">
 			<header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
@@ -68,26 +75,31 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
 			{user ? (
 				<>
 					<div
-						className="mx-auto flex size-full flex-1 flex-col gap-4 overflow-y-auto p-4"
+						className="mx-auto flex size-full max-w-5xl flex-1 flex-col items-center gap-4 overflow-y-auto p-4"
 						ref={containerRef}
 					>
-						{messages.map((message) => (
-							<Card key={message.id} className="mx-auto w-full max-w-5xl">
-								<CardHeader>
-									<RoleAvatar role={message.role} user={user} />
-								</CardHeader>
-								<CardContent>
-									<Markdown
-										className="prose max-w-full [&_pre]:m-0"
-										components={{
-											pre: ChatCodeBlock,
-										}}
-									>
-										{message.content}
-									</Markdown>
-								</CardContent>
-							</Card>
-						))}
+						{messages.length === 0 ? (
+							<Overview />
+						) : (
+							messages.map((message) => (
+								<Card key={message.id} className="mx-auto w-full">
+									<CardHeader>
+										<RoleAvatar role={message.role} user={user} />
+									</CardHeader>
+									<CardContent>
+										<Markdown
+											className="prose max-w-full [&_pre]:m-0"
+											components={{
+												pre: ChatCodeBlock,
+											}}
+										>
+											{message.content}
+										</Markdown>
+									</CardContent>
+								</Card>
+							))
+						)}
+
 						{isLoading &&
 							messages.length > 0 &&
 							messages[messages.length - 1].role === "user" && (
@@ -98,7 +110,7 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
 
 					<div className="mx-auto w-full max-w-2xl bg-background px-4 pb-4">
 						<ChatForm
-							handleSubmit={handleSubmit}
+							onSubmit={onSubmit}
 							handleInputChange={handleInputChange}
 							input={input}
 							isLoading={isLoading}

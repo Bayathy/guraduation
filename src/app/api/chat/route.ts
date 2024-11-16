@@ -4,6 +4,7 @@ import {
 	convertToCoreMessages,
 	CoreMessage,
 	CoreUserMessage,
+	generateObject,
 	generateText,
 	Message,
 	streamText,
@@ -12,7 +13,8 @@ import { z } from "zod";
 
 import { auth } from "@/auth";
 import { createChat, deleteChat, getChat } from "@/db/chat";
-import { createMessage } from "@/db/message";
+import { createIssue } from "@/db/issue";
+import { createMessage, deleteMessages } from "@/db/message";
 
 export const maxDuration = 30;
 
@@ -43,7 +45,11 @@ export async function POST(req: Request) {
 		await createChat(chatId, session.user.id!, title);
 	}
 
-	await createMessage(chatId, "user", messages[0].content);
+	const newUserMessage = await createMessage(
+		chatId,
+		"user",
+		userMessage.content as string,
+	);
 
 	const result = await streamText({
 		model: openai("gpt-3.5-turbo"),
@@ -59,24 +65,26 @@ export async function POST(req: Request) {
     \n\nこの形式で、学習者がつまずきやすいポイントを明確にし、理解を深めるためのアドバイスを提供してください。
     \n\nもし、トピックがない場合は、答えなくても構いません。絶対に日本語で答えてください。
     `,
-		tools: {
-			categorizeIssues: {
-				type: "function",
-				description: "Categorize the issues",
-				parameters: z.object({
-					issues: z.union([
-						z.literal("SyntaxError"),
-						z.literal("LogicError"),
-						z.literal("Concept Misunderstanding"),
-						z.literal("Algorithm Design"),
-						z.literal("Error/Warning Interpretation"),
-						z.literal("Coding Style/Best Practice"),
-					]),
-				}),
-			},
-		},
 		onFinish: async ({ text }) => {
-			await createMessage(chatId, "assistant", text);
+			const newAssistantMessage = await createMessage(
+				chatId,
+				"assistant",
+				text,
+			);
+
+			const { category } = await categorizeIssues({ message: userMessage });
+
+			console.log(category);
+
+			if (category && category !== "Other") {
+				await createIssue({
+					chatId,
+					userId: session.user!.id!,
+					assistantMessageId: newAssistantMessage.id,
+					userMessageId: newUserMessage.id,
+					category,
+				});
+			}
 		},
 	});
 
@@ -91,8 +99,50 @@ export async function DELETE(req: Request) {
 		return new Response(null, { status: 400 });
 	}
 
+	await deleteMessages(id);
 	await deleteChat(id);
 	return new Response(null, { status: 204 });
+}
+
+export async function categorizeIssues({
+	message,
+}: { message: CoreUserMessage }) {
+	const { object: issues } = await generateObject({
+		model: openai("gpt-3.5-turbo"),
+		system: `\n
+    以下のメッセージをもとに、学習者が理解していない可能性のある要点をリストアップしてください。
+    それぞれの要点について、以下のカテゴリのいずれかを選択してください。
+    判断が難しい場合は、"Other"を選択してください。
+
+    \n\n1. SyntaxError
+    \n2. LogicError
+    \n3. Concept Misunderstanding
+    \n4. Algorithm Design
+    \n5. Error/Warning Interpretation
+    \n6. Coding Style/Best Practice
+    \n7. Other
+
+    ラベル以外の文字列は使用しないでください。
+    `,
+		prompt: JSON.stringify(message),
+		schema: z.object({
+			category: z.union([
+				z.array(
+					z.union([
+						z.literal("SyntaxError"),
+						z.literal("LogicError"),
+						z.literal("Concept Misunderstanding"),
+						z.literal("Algorithm Design"),
+						z.literal("Error/Warning Interpretation"),
+						z.literal("Coding Style/Best Practice"),
+					]),
+				),
+				z.literal("Other"),
+			]),
+		}),
+	});
+
+	return issues;
 }
 
 export async function generateTitleFromUserMessage({
@@ -103,10 +153,10 @@ export async function generateTitleFromUserMessage({
 	const { text: title } = await generateText({
 		model: openai("gpt-3.5-turbo"),
 		system: `\n
-    - you will generate a short title based on the first message a user begins a conversation with
-    - ensure it is not more than 80 characters long
-    - the title should be a summary of the user's message
-    - do not use quotes or colons`,
+    - ユーザーが会話を始めた最初のメッセージに基づいて短いタイトルを生成します
+    - 80文字以内に収めてください
+    - タイトルはユーザーのメッセージの要約にしてください
+    - 引用符やコロンは使用しないでください`,
 		prompt: JSON.stringify(message),
 	});
 

@@ -4,8 +4,9 @@ import { Chat } from "@prisma/client";
 import clsx from "clsx";
 import { MoreHorizontalIcon } from "lucide-react";
 import Link from "next/link";
-import { redirect, useParams } from "next/navigation";
+import { redirect, useParams, usePathname } from "next/navigation";
 import { User } from "next-auth";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 import {
@@ -35,6 +36,11 @@ export const ChatList = ({
 	mutate: () => void;
 }) => {
 	const { id } = useParams();
+	const pathname = usePathname();
+
+	useEffect(() => {
+		mutate();
+	}, [pathname, id]);
 
 	const handleDelete = async (chatId: string) => {
 		const deletePromise = fetch(`/api/chat?id=${chatId}`, {
@@ -46,8 +52,6 @@ export const ChatList = ({
 			success: "Chat deleted",
 			error: "Failed to delete chat",
 		});
-
-		mutate();
 
 		if (id === chatId) {
 			redirect("/");
@@ -107,6 +111,7 @@ export const ChatList = ({
 					<div className="flex w-full flex-row items-center justify-center gap-2 text-sm text-zinc-500">
 						<div>
 							Your conversations will appear here once you start chatting!
+							{isLoading}
 						</div>
 					</div>
 				) : (

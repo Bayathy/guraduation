@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
-	handleSubmit: () => void;
+	onSubmit: () => void;
 	handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	input: string;
 	isLoading: boolean;
@@ -14,30 +14,29 @@ type Props = {
 };
 
 export const ChatForm = ({
-	handleSubmit,
+	onSubmit,
 	handleInputChange,
 	input,
 	isLoading,
-	setInput,
 }: Props) => {
 	return (
-		<form
-			onSubmit={handleSubmit}
-			className="flex w-full max-w-2xl items-center gap-2 rounded-lg bg-sidebar p-4"
-		>
+		<div className="flex w-full max-w-2xl items-center gap-2 rounded-lg bg-sidebar p-4">
 			<Textarea
 				placeholder="メッセージを入力"
 				onChange={handleInputChange}
 				value={input}
 				onKeyDown={(event) => {
-					if (event.key === "Enter" && !event.shiftKey) {
+					if (
+						event.key === "Enter" &&
+						!event.shiftKey &&
+						!event.nativeEvent.isComposing
+					) {
 						event.preventDefault();
 
 						if (isLoading) {
 							toast.error("Please wait for the model to finish its response!");
 						} else {
-							handleSubmit();
-							setInput("");
+							onSubmit();
 						}
 					}
 				}}
@@ -49,9 +48,13 @@ export const ChatForm = ({
 				className="h-fit"
 				variant="outline"
 				disabled={isLoading}
+				onClick={(e) => {
+					e.preventDefault();
+					onSubmit();
+				}}
 			>
 				{isLoading ? "送信中..." : "送信"}
 			</Button>
-		</form>
+		</div>
 	);
 };

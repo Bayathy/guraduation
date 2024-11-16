@@ -2,7 +2,7 @@ import { Message as DBMessage } from "@prisma/client";
 import { Message } from "ai";
 
 import { auth } from "@/auth";
-import { Chat } from "@/components/chat";
+import { Chat } from "@/components/Chat";
 import { getMessages } from "@/db/message";
 
 type Params = {

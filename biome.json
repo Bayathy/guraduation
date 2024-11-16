@@ -1,34 +1,33 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "linter": {
-    "enabled": false
-  },
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"linter": {
+		"enabled": false
+	},
 
-  "formatter": {
-    "enabled": true,
-      "formatWithErrors": false,
-      "ignore": [],
-      "attributePosition": "auto",
-      "indentStyle": "tab",
-      "indentWidth": 2,
-      "lineEnding": "lf",
-      "lineWidth": 80
-    },
-    "javascript": {
-      "formatter": {
-        "arrowParentheses":"always",
-        "bracketSameLine": false,
-        "bracketSpacing": true,
-        "jsxQuoteStyle": "double",
-        "quoteProperties": "asNeeded",
-        "semicolons": "always",
-        "trailingCommas": "all"
-      }
-    },
-    "json": {
-      "formatter": {
-        "trailingCommas": "none"
-      }
-    }
-  
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"ignore": ["node_modules", ".next"],
+		"attributePosition": "auto",
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineEnding": "lf",
+		"lineWidth": 80
+	},
+	"javascript": {
+		"formatter": {
+			"arrowParentheses": "always",
+			"bracketSameLine": false,
+			"bracketSpacing": true,
+			"jsxQuoteStyle": "double",
+			"quoteProperties": "asNeeded",
+			"semicolons": "always",
+			"trailingCommas": "all"
+		}
+	},
+	"json": {
+		"formatter": {
+			"trailingCommas": "none"
+		}
+	}
 }
