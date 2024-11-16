@@ -8,28 +8,28 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "ChatGPT Teacher",
-  description: "ChatGPT Teacher",
+	title: "ChatGPT Teacher",
+	description: "ChatGPT Teacher",
 };
 
 export default async function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  const session = await auth();
+	const session = await auth();
 
-  return (
-    <html lang="ja">
-      <body>
-        <SidebarProvider>
-          <AppSidebar user={session?.user ?? null} />
-          <SidebarInset className="flex h-dvh flex-col">
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
-        <Toaster />
-      </body>
-    </html>
-  );
+	return (
+		<html lang="ja">
+			<body>
+				<SidebarProvider>
+					<AppSidebar user={session?.user ?? null} />
+					<SidebarInset className="flex h-dvh flex-col">
+						{children}
+					</SidebarInset>
+				</SidebarProvider>
+				<Toaster />
+			</body>
+		</html>
+	);
 }
