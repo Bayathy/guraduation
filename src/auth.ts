@@ -7,6 +7,9 @@ import { prisma } from "./prisma";
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	adapter: PrismaAdapter(prisma),
 	providers: [GitHub],
+	session: {
+		strategy: "jwt",
+	},
 	callbacks: {
 		authorized({ auth, request: { nextUrl } }) {
 			const isLoggedIn = !!auth?.user;
@@ -21,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				return false; // Redirect unauthenticated users to login page
 			}
 
-			if (isLoggedIn) {
+			if (!isLoggedIn) {
 				return Response.redirect(new URL("/", nextUrl as unknown as URL));
 			}
 

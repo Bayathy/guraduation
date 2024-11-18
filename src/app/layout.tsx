@@ -24,9 +24,7 @@ export default async function RootLayout({
 			<body>
 				<SidebarProvider>
 					<AppSidebar user={session?.user ?? null} />
-					<SidebarInset className="flex h-dvh flex-col">
-						{children}
-					</SidebarInset>
+					<SidebarInset className="flex h-dvh flex-col">{children}</SidebarInset>
 				</SidebarProvider>
 				<Toaster position="top-right" />
 			</body>

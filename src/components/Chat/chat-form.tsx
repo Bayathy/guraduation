@@ -13,12 +13,7 @@ type Props = {
 	setInput: (input: string) => void;
 };
 
-export const ChatForm = ({
-	onSubmit,
-	handleInputChange,
-	input,
-	isLoading,
-}: Props) => {
+export const ChatForm = ({ onSubmit, handleInputChange, input, isLoading }: Props) => {
 	return (
 		<div className="flex w-full max-w-2xl items-center gap-2 rounded-lg bg-sidebar p-4">
 			<Textarea
@@ -26,11 +21,7 @@ export const ChatForm = ({
 				onChange={handleInputChange}
 				value={input}
 				onKeyDown={(event) => {
-					if (
-						event.key === "Enter" &&
-						!event.shiftKey &&
-						!event.nativeEvent.isComposing
-					) {
+					if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
 						event.preventDefault();
 
 						if (isLoading) {

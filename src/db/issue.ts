@@ -33,3 +33,17 @@ export const createIssue = async ({
 		},
 	});
 };
+
+export const getIssues = async (userId: string) => {
+	const issues = await prisma.issue.findMany({
+		where: { userId },
+		include: {
+			MessageIssue: {
+				include: {
+					Message: true,
+				},
+			},
+		},
+	});
+	return issues;
+};

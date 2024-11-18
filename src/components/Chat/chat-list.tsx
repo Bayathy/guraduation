@@ -9,12 +9,7 @@ import { User } from "next-auth";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import {
 	SidebarGroup,
 	SidebarGroupContent,
@@ -81,10 +76,7 @@ export const ChatList = ({
 					</SidebarGroupLabel>
 					<div className="flex flex-col">
 						{[44, 32, 28, 64, 52].map((item) => (
-							<div
-								key={item}
-								className="flex h-8 items-center gap-2 rounded-md px-2"
-							>
+							<div key={item} className="flex h-8 items-center gap-2 rounded-md px-2">
 								<div
 									className="h-4 max-w-[--skeleton-width] flex-1 rounded-md bg-sidebar-accent-foreground/10"
 									style={
@@ -120,8 +112,7 @@ export const ChatList = ({
 							key={chat.id}
 							className={clsx(
 								"flex list-none items-center justify-between rounded-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-								id === chat.id &&
-									"bg-sidebar-accent text-sidebar-accent-foreground",
+								id === chat.id && "bg-sidebar-accent text-sidebar-accent-foreground",
 							)}
 						>
 							<SidebarMenuButton asChild>
@@ -137,9 +128,7 @@ export const ChatList = ({
 									</SidebarMenuAction>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent>
-									<DropdownMenuItem onClick={() => handleDelete(chat.id)}>
-										Delete
-									</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => handleDelete(chat.id)}>Delete</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
 						</SidebarMenuItem>

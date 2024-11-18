@@ -9,9 +9,9 @@ import {
 	Message,
 	streamText,
 } from "ai";
-import { z } from "zod";
 
 import { auth } from "@/auth";
+import { IssueCategorySchema } from "@/components/Issue/types";
 import { createChat, deleteChat, getChat } from "@/db/chat";
 import { createIssue } from "@/db/issue";
 import { createMessage, deleteMessages } from "@/db/message";
@@ -45,11 +45,7 @@ export async function POST(req: Request) {
 		await createChat(chatId, session.user.id!, title);
 	}
 
-	const newUserMessage = await createMessage(
-		chatId,
-		"user",
-		userMessage.content as string,
-	);
+	const newUserMessage = await createMessage(chatId, "user", userMessage.content as string);
 
 	const result = await streamText({
 		model: openai("gpt-3.5-turbo"),
@@ -66,11 +62,7 @@ export async function POST(req: Request) {
     \n\nもし、トピックがない場合は、答えなくても構いません。絶対に日本語で答えてください。
     `,
 		onFinish: async ({ text }) => {
-			const newAssistantMessage = await createMessage(
-				chatId,
-				"assistant",
-				text,
-			);
+			const newAssistantMessage = await createMessage(chatId, "assistant", text);
 
 			const { category } = await categorizeIssues({ message: userMessage });
 
@@ -104,9 +96,7 @@ export async function DELETE(req: Request) {
 	return new Response(null, { status: 204 });
 }
 
-export async function categorizeIssues({
-	message,
-}: { message: CoreUserMessage }) {
+export async function categorizeIssues({ message }: { message: CoreUserMessage }) {
 	const { object: issues } = await generateObject({
 		model: openai("gpt-3.5-turbo"),
 		system: `\n
@@ -116,30 +106,16 @@ export async function categorizeIssues({
 
     \n\n1. SyntaxError
     \n2. LogicError
-    \n3. Concept Misunderstanding
-    \n4. Algorithm Design
-    \n5. Error/Warning Interpretation
-    \n6. Coding Style/Best Practice
+    \n3. ConceptMisunderstanding
+    \n4. AlgorithmDesign
+    \n5. ErrorWarningInterpretation
+    \n6. CodingStyleBestPractice
     \n7. Other
 
     ラベル以外の文字列は使用しないでください。
     `,
 		prompt: JSON.stringify(message),
-		schema: z.object({
-			category: z.union([
-				z.array(
-					z.union([
-						z.literal("SyntaxError"),
-						z.literal("LogicError"),
-						z.literal("Concept Misunderstanding"),
-						z.literal("Algorithm Design"),
-						z.literal("Error/Warning Interpretation"),
-						z.literal("Coding Style/Best Practice"),
-					]),
-				),
-				z.literal("Other"),
-			]),
-		}),
+		schema: IssueCategorySchema,
 	});
 
 	return issues;

@@ -31,14 +31,7 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
 
 	const [containerRef, endRef] = useScrollToBottom<HTMLDivElement>();
 
-	const {
-		messages,
-		input,
-		handleInputChange,
-		handleSubmit,
-		isLoading,
-		setInput,
-	} = useChat({
+	const { messages, input, handleInputChange, handleSubmit, isLoading, setInput } = useChat({
 		initialMessages,
 		body: {
 			chatId,
@@ -100,11 +93,7 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
 							))
 						)}
 
-						{isLoading &&
-							messages.length > 0 &&
-							messages[messages.length - 1].role === "user" && (
-								<ThinkingMessage />
-							)}
+						{isLoading && messages.length > 0 && messages[messages.length - 1].role === "user" && <ThinkingMessage />}
 						<div ref={endRef} />
 					</div>
 

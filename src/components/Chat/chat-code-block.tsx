@@ -9,9 +9,7 @@ import { Button } from "../ui/button";
 export const ChatCodeBlock = ({
 	children,
 	...props
-}: ClassAttributes<HTMLPreElement> &
-	HTMLAttributes<HTMLPreElement> &
-	ExtraProps) => {
+}: ClassAttributes<HTMLPreElement> & HTMLAttributes<HTMLPreElement> & ExtraProps) => {
 	if (!children || typeof children !== "object") {
 		return <code {...props}>{children}</code>;
 	}
@@ -27,11 +25,7 @@ export const ChatCodeBlock = ({
 	return (
 		<div className="relative">
 			<div className="absolute right-2 top-2">
-				<Button
-					variant="outline"
-					size="icon"
-					onClick={() => navigator.clipboard.writeText(String(code))}
-				>
+				<Button variant="outline" size="icon" onClick={() => navigator.clipboard.writeText(String(code))}>
 					<Copy />
 				</Button>
 			</div>

@@ -23,11 +23,5 @@ export default async function ChatPage(props: { params: Promise<Params> }) {
 	const session = await auth();
 	const messages = await getMessages(params.id);
 
-	return (
-		<Chat
-			chatId={params.id}
-			initialMessages={convertUIMessage(messages)}
-			user={session?.user ?? null}
-		/>
-	);
+	return <Chat chatId={params.id} initialMessages={convertUIMessage(messages)} user={session?.user ?? null} />;
 }
