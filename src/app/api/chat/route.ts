@@ -104,12 +104,12 @@ export async function categorizeIssues({ message }: { message: CoreUserMessage }
     それぞれの要点について、以下のカテゴリのいずれかを選択してください。
     判断が難しい場合は、"Other"を選択してください。
 
-    \n\n1. SyntaxError
-    \n2. LogicError
-    \n3. ConceptMisunderstanding
-    \n4. AlgorithmDesign
-    \n5. ErrorWarningInterpretation
-    \n6. CodingStyleBestPractice
+    \n\n1. Syntax Error
+    \n2. Logic Error
+    \n3. Concept Misunderstanding
+    \n4. Algorithm Design
+    \n5. Error/Warning Interpretation
+    \n6. Coding Style/Best Practice
     \n7. Other
 
     ラベル以外の文字列は使用しないでください。
