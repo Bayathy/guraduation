@@ -2,6 +2,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 
+import { generateRandomTestType } from "./lib/random";
 import { prisma } from "./prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -11,6 +12,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		strategy: "jwt",
 	},
 	callbacks: {
+		signIn: async ({ user }) => {
+			if (!user.id) return false;
+			const userTestType = await prisma.userTestType.findUnique({
+				where: {
+					id: user.id,
+				},
+			});
+
+			if (userTestType) return true;
+
+			await prisma.userTestType.create({
+				data: {
+					userId: user.id,
+					testType: generateRandomTestType(),
+				},
+			});
+			return true;
+		},
 		session: async ({ session, token }) => {
 			if (token.sub && session.user) {
 				session.user.id = token.sub;
