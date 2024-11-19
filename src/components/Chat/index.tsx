@@ -1,8 +1,6 @@
 "use client";
 
 import { Message, useChat } from "ai/react";
-import { ChartNoAxesColumn } from "lucide-react";
-import Link from "next/link";
 import { User } from "next-auth";
 import { useCallback } from "react";
 import Markdown from "react-markdown";
@@ -12,7 +10,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useScrollToBottom } from "@/hooks/use-scroll-bottom";
 
-import { Button } from "../ui/button";
 import { ChatCodeBlock } from "./chat-code-block";
 import { ChatForm } from "./chat-form";
 import { Overview } from "./overview";
@@ -53,16 +50,16 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
 	}, [chatId, handleSubmit, setInput]);
 
 	return (
-		<div className="flex h-dvh flex-col bg-background">
+		<div className="flex h-dvh max-w-full flex-col bg-background">
 			<header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
 				<SidebarTrigger className="-ml-1" />
 				<div className="flex w-full items-center justify-between gap-2">
 					<h1 className="">{user ? "Chat" : "Please sign in"}</h1>
-					<Button variant="outline" asChild>
-						<Link href="/analytics">
-							<ChartNoAxesColumn />
-						</Link>
-					</Button>
+					{/* <Button variant="outline" asChild>
+            <Link href="/analytics">
+              <ChartNoAxesColumn />
+            </Link>
+          </Button> */}
 				</div>
 			</header>
 			{user ? (
@@ -72,10 +69,12 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
 						ref={containerRef}
 					>
 						{messages.length === 0 ? (
-							<Overview />
+							<div className="grid h-full place-items-center">
+								<Overview />
+							</div>
 						) : (
 							messages.map((message) => (
-								<Card key={message.id} className="mx-auto w-full">
+								<Card key={message.id} className="mx-auto w-full max-w-full">
 									<CardHeader>
 										<RoleAvatar role={message.role} user={user} />
 									</CardHeader>

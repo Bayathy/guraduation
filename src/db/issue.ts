@@ -6,18 +6,21 @@ export const createIssue = async ({
 	assistantMessageId,
 	userMessageId,
 	category,
+	reason,
 }: {
 	chatId: string;
 	userId: string;
 	assistantMessageId: string;
 	userMessageId: string;
 	category: string[];
+	reason: string;
 }) => {
 	await prisma.issue.create({
 		data: {
 			chatId,
 			userId,
 			category,
+			reason,
 			MessageIssue: {
 				createMany: {
 					data: [

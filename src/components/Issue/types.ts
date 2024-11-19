@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const IssueCategorySchema = z.object({
-	category: z.union([
+	issues: z.union([
 		z.array(
 			z.union([
 				z.literal("Syntax Error"),
@@ -14,6 +14,7 @@ export const IssueCategorySchema = z.object({
 		),
 		z.literal("Other"),
 	]),
+	reason: z.string(),
 });
 
 export type IssueCategory = z.infer<typeof IssueCategorySchema>;

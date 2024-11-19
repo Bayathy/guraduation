@@ -48,9 +48,12 @@ export const ChatList = ({
 			error: "Failed to delete chat",
 		});
 
-		if (id === chatId) {
-			redirect("/");
-		}
+		deletePromise.then(() => {
+			mutate();
+			if (id === chatId) {
+				redirect("/");
+			}
+		});
 	};
 
 	if (!user)

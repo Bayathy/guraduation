@@ -21,6 +21,7 @@ model User {
   Chat          Chat[]
   sessions      Session[]
   Issue         Issue[]
+  UserTestType  UserTestType[]
 }
 
 model Account {
@@ -79,8 +80,8 @@ model Message {
   content   String
   createdAt DateTime @default(now())
 
-  chatId    String
-  Chat      Chat?    @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId String
+  Chat   Chat?  @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   MessageIssue MessageIssue[]
 }
@@ -95,7 +96,6 @@ model Chat {
 
   Issue Issue[]
 }
-
 
 model MessageIssue {
   messageId String
@@ -113,9 +113,17 @@ model Issue {
   chatId    String
   createdAt DateTime @default(now())
   category  String[]
+  reason    String
 
-  Chat             Chat    @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  User             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   MessageIssue MessageIssue[]
+}
+
+model UserTestType {
+  id       String @id @default(uuid())
+  userId   String
+  testType String
+  User     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -11,6 +11,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		strategy: "jwt",
 	},
 	callbacks: {
+		session: async ({ session, token }) => {
+			if (token.sub && session.user) {
+				session.user.id = token.sub;
+			}
+			return session;
+		},
 		authorized({ auth, request: { nextUrl } }) {
 			const isLoggedIn = !!auth?.user;
 			const isOnChat = nextUrl.pathname.startsWith("/chat");

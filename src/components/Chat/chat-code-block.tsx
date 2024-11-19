@@ -23,7 +23,7 @@ export const ChatCodeBlock = ({
 	const language = className?.replace("language-", "");
 
 	return (
-		<div className="relative">
+		<div className="relative w-full max-w-full overflow-x-auto">
 			<div className="absolute right-2 top-2">
 				<Button variant="outline" size="icon" onClick={() => navigator.clipboard.writeText(String(code))}>
 					<Copy />

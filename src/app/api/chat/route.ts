@@ -15,6 +15,7 @@ import { IssueCategorySchema } from "@/components/Issue/types";
 import { createChat, deleteChat, getChat } from "@/db/chat";
 import { createIssue } from "@/db/issue";
 import { createMessage, deleteMessages } from "@/db/message";
+import { basePrompt, createIssuePrompt, createTitlePrompt } from "@/lib/PROMPOT";
 
 export const maxDuration = 30;
 
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
 	if (!session?.user) {
 		return new Response(null, { status: 401 });
 	}
+
 	const {
 		messages,
 		chatId,
@@ -50,31 +52,20 @@ export async function POST(req: Request) {
 	const result = await streamText({
 		model: openai("gpt-3.5-turbo"),
 		messages,
-		system: `\n 
-    あなたはプログラミングの教師です。
-    以下のトピックについて、学習者が理解していない可能性のある要点をリストアップしてください。また、それぞれの要点について簡潔な説明を加えてください。
-    \n\nトピック: [ここにトピックを入力]
-    \n\n1. 理解が不十分な可能性のある要点:
-    \n   - 要点1: [説明]
-    \n   - 要点2: [説明]
-    \n   - 要点3: [説明]
-    \n\nこの形式で、学習者がつまずきやすいポイントを明確にし、理解を深めるためのアドバイスを提供してください。
-    \n\nもし、トピックがない場合は、答えなくても構いません。絶対に日本語で答えてください。
-    `,
+		system: basePrompt,
 		onFinish: async ({ text }) => {
 			const newAssistantMessage = await createMessage(chatId, "assistant", text);
 
-			const { category } = await categorizeIssues({ message: userMessage });
+			const response = await categorizeIssues({ messages });
 
-			console.log(category);
-
-			if (category && category !== "Other") {
+			if (response && response.issues !== "Other") {
 				await createIssue({
 					chatId,
 					userId: session.user!.id!,
 					assistantMessageId: newAssistantMessage.id,
 					userMessageId: newUserMessage.id,
-					category,
+					category: response.issues,
+					reason: response.reason,
 				});
 			}
 		},
@@ -96,25 +87,11 @@ export async function DELETE(req: Request) {
 	return new Response(null, { status: 204 });
 }
 
-export async function categorizeIssues({ message }: { message: CoreUserMessage }) {
+export async function categorizeIssues({ messages }: { messages: Message[] }) {
 	const { object: issues } = await generateObject({
 		model: openai("gpt-3.5-turbo"),
-		system: `\n
-    以下のメッセージをもとに、学習者が理解していない可能性のある要点をリストアップしてください。
-    それぞれの要点について、以下のカテゴリのいずれかを選択してください。
-    判断が難しい場合は、"Other"を選択してください。
-
-    \n\n1. Syntax Error
-    \n2. Logic Error
-    \n3. Concept Misunderstanding
-    \n4. Algorithm Design
-    \n5. Error/Warning Interpretation
-    \n6. Coding Style/Best Practice
-    \n7. Other
-
-    ラベル以外の文字列は使用しないでください。
-    `,
-		prompt: JSON.stringify(message),
+		system: createIssuePrompt,
+		messages,
 		schema: IssueCategorySchema,
 	});
 
@@ -128,11 +105,7 @@ export async function generateTitleFromUserMessage({
 }) {
 	const { text: title } = await generateText({
 		model: openai("gpt-3.5-turbo"),
-		system: `\n
-    - ユーザーが会話を始めた最初のメッセージに基づいて短いタイトルを生成します
-    - 80文字以内に収めてください
-    - タイトルはユーザーのメッセージの要約にしてください
-    - 引用符やコロンは使用しないでください`,
+		system: createTitlePrompt,
 		prompt: JSON.stringify(message),
 	});
 
