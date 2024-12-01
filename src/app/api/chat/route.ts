@@ -2,20 +2,17 @@
 import { openai } from "@ai-sdk/openai";
 import {
 	convertToCoreMessages,
-	CoreMessage,
-	CoreUserMessage,
-	generateObject,
-	generateText,
 	Message,
 	streamText,
 } from "ai";
 
 import { auth } from "@/auth";
-import { IssueCategorySchema } from "@/components/Issue/types";
 import { createChat, deleteChat, getChat } from "@/db/chat";
 import { createIssue } from "@/db/issue";
 import { createMessage, deleteMessages } from "@/db/message";
-import { basePrompt, createIssuePrompt, createTitlePrompt } from "@/lib/PROMPOT";
+import { categorizeIssues } from "@/lib/categorized-issue";
+import { generateTitleFromUserMessage,getMostRecentUserMessage } from "@/lib/generate-title-from-message";
+import { basePrompt } from "@/lib/PROMPOT";
 
 export const maxDuration = 30;
 
@@ -87,32 +84,3 @@ export async function DELETE(req: Request) {
 	return new Response(null, { status: 204 });
 }
 
-export async function categorizeIssues({ messages }: { messages: Message[] }) {
-	const { object: issues } = await generateObject({
-		model: openai("gpt-3.5-turbo"),
-		system: createIssuePrompt,
-		messages,
-		schema: IssueCategorySchema,
-	});
-
-	return issues;
-}
-
-export async function generateTitleFromUserMessage({
-	message,
-}: {
-	message: CoreUserMessage;
-}) {
-	const { text: title } = await generateText({
-		model: openai("gpt-3.5-turbo"),
-		system: createTitlePrompt,
-		prompt: JSON.stringify(message),
-	});
-
-	return title;
-}
-
-export function getMostRecentUserMessage(messages: Array<CoreMessage>) {
-	const userMessages = messages.filter((message) => message.role === "user");
-	return userMessages.at(-1);
-}
