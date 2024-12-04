@@ -10,16 +10,15 @@ type Props = {
 	handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	input: string;
 	isLoading: boolean;
-	setInput: (input: string) => void;
 };
 
 export const ChatForm = ({ onSubmit, handleInputChange, input, isLoading }: Props) => {
 	return (
-		<div className="flex w-full max-w-2xl items-center gap-2 rounded-lg bg-sidebar p-4">
+		<div className="flex w-full items-center gap-2 rounded-lg bg-sidebar p-4">
 			<Textarea
 				placeholder="メッセージを入力"
-				onChange={handleInputChange}
 				value={input}
+				onChange={handleInputChange}
 				onKeyDown={(event) => {
 					if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
 						event.preventDefault();

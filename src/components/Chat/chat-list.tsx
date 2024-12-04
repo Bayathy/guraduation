@@ -110,32 +110,35 @@ export const ChatList = ({
 						</div>
 					</div>
 				) : (
-					history?.map((chat) => (
-						<SidebarMenuItem
-							key={chat.id}
-							className={clsx(
-								"flex list-none items-center justify-between rounded-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-								id === chat.id && "bg-sidebar-accent text-sidebar-accent-foreground",
-							)}
-						>
-							<SidebarMenuButton asChild>
-								<Link href={`/chat/${chat.id}`} prefetch={false}>
-									<span>{chat.name}</span>
-								</Link>
-							</SidebarMenuButton>
-							<DropdownMenu modal={true}>
-								<DropdownMenuTrigger asChild>
-									<SidebarMenuAction className="mr-0.5 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-										<MoreHorizontalIcon />
-										<span className="sr-only">More</span>
-									</SidebarMenuAction>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent>
-									<DropdownMenuItem onClick={() => handleDelete(chat.id)}>Delete</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</SidebarMenuItem>
-					))
+					history?.map(
+						(chat) =>
+							!chat.isDeleted && (
+								<SidebarMenuItem
+									key={chat.id}
+									className={clsx(
+										"flex list-none items-center justify-between rounded-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+										id === chat.id && "bg-sidebar-accent text-sidebar-accent-foreground",
+									)}
+								>
+									<SidebarMenuButton asChild>
+										<Link href={`/chat/${chat.id}`} prefetch={false}>
+											<span>{chat.name}</span>
+										</Link>
+									</SidebarMenuButton>
+									<DropdownMenu modal={true}>
+										<DropdownMenuTrigger asChild>
+											<SidebarMenuAction className="mr-0.5 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+												<MoreHorizontalIcon />
+												<span className="sr-only">More</span>
+											</SidebarMenuAction>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent>
+											<DropdownMenuItem onClick={() => handleDelete(chat.id)}>Delete</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</SidebarMenuItem>
+							),
+					)
 				)}
 			</SidebarGroupContent>
 		</SidebarGroup>

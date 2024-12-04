@@ -27,9 +27,8 @@ export const getChat = async (chatId: string) => {
 };
 
 export const deleteChat = async (id: string) => {
-	await prisma.chat.delete({
-		where: {
-			id,
-		},
+	await prisma.chat.update({
+		where: { id },
+		data: { isDeleted: true },
 	});
 };

@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { CoreMessage,CoreUserMessage, generateText } from "ai";
+import { CoreMessage, CoreUserMessage, generateText } from "ai";
 
 import { createTitlePrompt } from "./PROMPOT";
 

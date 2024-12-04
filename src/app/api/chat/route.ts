@@ -1,17 +1,13 @@
 // Allow streaming responses up to 30 seconds
 import { openai } from "@ai-sdk/openai";
-import {
-	convertToCoreMessages,
-	Message,
-	streamText,
-} from "ai";
+import { convertToCoreMessages, Message, streamText } from "ai";
 
 import { auth } from "@/auth";
 import { createChat, deleteChat, getChat } from "@/db/chat";
 import { createIssue } from "@/db/issue";
 import { createMessage, deleteMessages } from "@/db/message";
 import { categorizeIssues } from "@/lib/categorized-issue";
-import { generateTitleFromUserMessage,getMostRecentUserMessage } from "@/lib/generate-title-from-message";
+import { generateTitleFromUserMessage, getMostRecentUserMessage } from "@/lib/generate-title-from-message";
 import { basePrompt } from "@/lib/PROMPOT";
 
 export const maxDuration = 30;
@@ -55,7 +51,7 @@ export async function POST(req: Request) {
 
 			const response = await categorizeIssues({ messages });
 
-			if (response && response.issues !== "Other") {
+			if (response.issues !== "Other") {
 				await createIssue({
 					chatId,
 					userId: session.user!.id!,
@@ -65,6 +61,15 @@ export async function POST(req: Request) {
 					reason: response.reason,
 				});
 			}
+
+			await createIssue({
+				chatId,
+				userId: session.user!.id!,
+				assistantMessageId: newAssistantMessage.id,
+				userMessageId: newUserMessage.id,
+				category: ["Other"],
+				reason: response.reason,
+			});
 		},
 	});
 
@@ -83,4 +88,3 @@ export async function DELETE(req: Request) {
 	await deleteChat(id);
 	return new Response(null, { status: 204 });
 }
-

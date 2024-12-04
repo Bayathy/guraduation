@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { generateObject,Message } from "ai";
+import { generateObject, Message } from "ai";
 
 import { IssueCategorySchema } from "@/components/Issue/types";
 
@@ -15,5 +15,3 @@ export async function categorizeIssues({ messages }: { messages: Message[] }) {
 
 	return issues;
 }
-
-

@@ -21,9 +21,12 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from "./ui/sidebar";
 
 export const AppSidebar = ({ user }: { user: User | null }) => {
+	const { setOpen } = useSidebar();
+
 	const {
 		data: history,
 		isLoading,
@@ -41,6 +44,7 @@ export const AppSidebar = ({ user }: { user: User | null }) => {
 							<Button
 								variant="outline"
 								onClick={() => {
+									setOpen(false);
 									redirect(`/`);
 								}}
 							>

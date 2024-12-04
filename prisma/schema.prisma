@@ -91,6 +91,7 @@ model Chat {
   createdAt DateTime  @default(now())
   userId    String
   name      String    @default("New Chat")
+  isDeleted Boolean   @default(false)
   User      User      @relation(fields: [userId], references: [id])
   messages  Message[]
 
