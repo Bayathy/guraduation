@@ -23,7 +23,7 @@ export const MessageList = memo(({ messages, isLoading, user }: Props) => {
           key={message.id}
           className={clsx(
             "mx-auto w-full max-w-5xl",
-            message.role === "user" && "border-none shadow-none"
+            message.role === "assistant" && "border-none shadow-none"
           )}
         >
           <CardHeader>

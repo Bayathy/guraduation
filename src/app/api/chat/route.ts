@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 	const newUserMessage = await createMessage(chatId, "user", userMessage.content as string);
 
 	const result = await streamText({
-		model: openai("gpt-3.5-turbo"),
+		model: openai("gpt-4"),
 		messages,
 		system: basePrompt,
 		onFinish: async ({ text }) => {

@@ -68,8 +68,8 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
               <p>下のテキストボックスにメッセージを入力してください。</p>
             </div>
           )}
-          <div className="size-full flex-1 p-4" ref={containerRef}>
-            <div className="mx-auto grid max-w-5xl gap-4 overflow-y-auto">
+          <div className="h-fit w-full flex-1 overflow-auto p-4" ref={containerRef}>
+            <div className="mx-auto grid max-w-5xl gap-4">
               <MessageList
                 messages={messages}
                 isLoading={isLoading}
@@ -77,9 +77,9 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
               />
             </div>
           </div>
-          <div ref={endRef} className="h-1" />
+          <div ref={endRef} className="h-4" />
 
-          <div className="mx-auto w-full max-w-2xl bg-background px-4 pb-4">
+          <div className="bottom-0 mx-auto w-full max-w-2xl bg-transparent px-4 pb-4">
             <ChatForm
               onSubmit={onSubmit}
               isLoading={isLoading}

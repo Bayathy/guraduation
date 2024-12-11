@@ -12,7 +12,7 @@ export const Overview = ({ user }: Props) => {
 		return (
 			<div className="flex flex-col items-center justify-center gap-2">
 				<div>Please sign in to save and revisit previous chats!</div>
-				<Button onClick={() => signIn()}>Sign in</Button>
+				<Button onClick={() => signIn()}>Login</Button>
 			</div>
 		);
 
