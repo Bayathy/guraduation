@@ -6,9 +6,10 @@ import { auth } from "@/auth";
 import { createChat, deleteChat, getChat } from "@/db/chat";
 import { createIssue } from "@/db/issue";
 import { createMessage, deleteMessages } from "@/db/message";
+import { getUserTestType } from "@/db/user-test-type";
 import { categorizeIssues } from "@/lib/categorized-issue";
 import { generateTitleFromUserMessage, getMostRecentUserMessage } from "@/lib/generate-title-from-message";
-import { basePrompt } from "@/lib/PROMPOT";
+import { basePrompt_A, basePrompt_B } from "@/lib/PROMPOT";
 
 export const maxDuration = 30;
 
@@ -42,10 +43,14 @@ export async function POST(req: Request) {
 
 	const newUserMessage = await createMessage(chatId, "user", userMessage.content as string);
 
+	const userTestType = await getUserTestType(session.user.id!);
+
+	const prompt = userTestType?.testType === "A" ? basePrompt_A : basePrompt_B;
+
 	const result = await streamText({
 		model: openai("gpt-4"),
 		messages,
-		system: basePrompt,
+		system: prompt,
 		onFinish: async ({ text }) => {
 			const newAssistantMessage = await createMessage(chatId, "assistant", text);
 

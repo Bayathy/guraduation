@@ -20,14 +20,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				},
 			});
 
-			if (userTestType) return true;
-
-			await prisma.userTestType.create({
+			if (!userTestType) {
+				await prisma.userTestType.create({
 				data: {
 					userId: user.id,
 					testType: generateRandomTestType(),
 				},
-			});
+				});
+			}
 			return true;
 		},
 		session: async ({ session, token }) => {
