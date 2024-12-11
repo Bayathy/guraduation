@@ -1,13 +1,16 @@
+import { ArrowUp, StopCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+
+import { AutosizeTextarea } from "../ui/textarea";
 
 type Props = {
   onSubmit: () => void;
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   input: string;
   isLoading: boolean;
+  stop: () => void;
 };
 
 export const ChatForm = ({
@@ -17,11 +20,12 @@ export const ChatForm = ({
   handleInputChange,
 }: Props) => {
   return (
-    <div className="flex w-full items-center gap-2 rounded-lg bg-sidebar p-4">
-      <Textarea
+    <div className="flex w-full items-end gap-2 rounded-lg bg-sidebar p-4 ">
+      <AutosizeTextarea
         placeholder="メッセージを入力"
         value={input}
         onChange={handleInputChange}
+        maxHeight={160}
         onKeyDown={(event) => {
           if (
             event.key === "Enter" &&
@@ -43,13 +47,16 @@ export const ChatForm = ({
         type="submit"
         className="h-fit"
         variant="outline"
-        disabled={isLoading}
         onClick={(e) => {
           e.preventDefault();
-          onSubmit();
+          if (isLoading) {
+            stop();
+          } else {
+            onSubmit();
+          }
         }}
       >
-        {isLoading ? "送信中..." : "送信"}
+        {isLoading ? <StopCircle /> : <ArrowUp />}
       </Button>
     </div>
   );

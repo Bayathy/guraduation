@@ -31,6 +31,7 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
     setInput,
     isLoading,
     input,
+    stop,
   } = useChat({
     initialMessages,
     body: {
@@ -58,11 +59,6 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
         <SidebarTrigger className="-ml-1" />
         <div className="flex w-full items-center justify-between gap-2">
           <h1 className="">{user ? "Chat" : "Please sign in"}</h1>
-          {/* <Button variant="outline" asChild>
-            <Link href="/analytics">
-              <ChartNoAxesColumn />
-            </Link>
-          </Button> */}
         </div>
       </header>
       {user ? (
@@ -89,6 +85,7 @@ export const Chat = ({ chatId, initialMessages, user }: Props) => {
               isLoading={isLoading}
               input={input}
               handleInputChange={handleInputChange}
+              stop={stop}
             />
           </div>
         </>
