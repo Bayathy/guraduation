@@ -14,18 +14,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 	callbacks: {
 		signIn: async ({ user }) => {
 			if (!user.id) return false;
-			const userTestType = await prisma.userTestType.findUnique({
+
+			const userTestType = await prisma.userTestType.findFirst({
 				where: {
-					id: user.id,
+					userId: user.id,
 				},
 			});
 
 			if (!userTestType) {
 				await prisma.userTestType.create({
-				data: {
-					userId: user.id,
-					testType: generateRandomTestType(),
-				},
+					data: {
+						userId: user.id,
+						testType: generateRandomTestType(),
+					},
 				});
 			}
 			return true;

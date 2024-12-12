@@ -21,7 +21,7 @@ model User {
   Chat          Chat[]
   sessions      Session[]
   Issue         Issue[]
-  UserTestType  UserTestType[]
+  ExamAnswer    ExamAnswer[]
 }
 
 model Account {
@@ -126,5 +126,17 @@ model UserTestType {
   id       String @id @default(uuid())
   userId   String
   testType String
-  User     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ExamAnswer {
+  id        String   @id @default(cuid())
+  userId    String
+  answer1   String
+  answer2   String
+  answer3   String
+  answer4   String
+  answer5   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
 }
