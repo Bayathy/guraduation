@@ -6,5 +6,6 @@ export default async function Home() {
 	const id = generateUUID();
 	const session = await auth();
 
-	return <Chat chatId={id} initialMessages={[]} user={session?.user ?? null} />;
+  
+	return <Chat chatId={id} initialMessages={[]} user={session?.user ?? null} />;  
 }
