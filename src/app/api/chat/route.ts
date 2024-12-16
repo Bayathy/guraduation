@@ -47,7 +47,7 @@ export async function POST(req: Request) {
 	// const prompt = userTestType?.testType === "A" ? basePrompt_A : basePrompt_B;
 
 	const result = await streamText({
-		model: openai("gpt-4o-mini"),
+		model: openai("gpt-4o-2024-08-06"),
 		messages,
 		system: basePrompt_A,
 		onFinish: async ({ text }) => {
